@@ -1,0 +1,193 @@
+<?xml version="1.0"?>
+<!-- Ant script for running client-side JAX-RS examples -->
+<project name="rest-client-examples" default="run-geoip" basedir=".">
+	<property name="root.location" location="." />
+	
+	<!-- define directories -->
+   	<property name="src.dir" location="${root.location}/src"/>
+	<property name="lib.dir" location="${root.location}/lib" />
+	<property name="build.dir" location="${root.location}/build"/>
+	<property name="gen.dir" location="${root.location}/generated" />
+	
+	<!-- define compilation properties -->
+	<property name="debug" value="true" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.8" />
+	<property name="source" value="1.8" />
+	
+	<!-- define client classes and packages -->
+	<property name="isbn.class" value="it.polito.dp2.isbn.ISBNClient"/>
+	<property name="geoip.class" value="it.polito.dp2.geoip.GEOIPClient"/>
+	<property name="geoip_jaxb.class" value="it.polito.dp2.geoip.GEOIPClient_jaxb"/>
+	<property name="counter.class" value="it.polito.dp2.counterClient.CounterClient"/>
+	<property name="negotiate.class" value="it.polito.dp2.clientNegotiate.clientNegotiate"/>
+	
+	<!-- define location of WADL for WADL-based example -->
+	<property name="negotiate.name" value="negotiate-webdyn" />
+	<property name="negotiate.location" value="webapi" />
+	<property name="negotiate.wadl" value="http://localhost:8080/${negotiate.name}/${negotiate.location}/application.wadl" />
+
+	<!-- define wjc task (WADL to Java) -->
+	<taskdef name="wjc" classname="org.jvnet.ws.wadl2java.WJCTask">
+	   <classpath>
+	   	<fileset dir="${lib.dir}" includes="*.jar" />
+	   </classpath>
+	</taskdef>
+	
+	<!-- define paths -->
+	<path id="lib.classpath">
+			<pathelement location="${build.dir}" />
+		<!-- uncomment the following fdileset if you use Java EE
+		     or if your JDK does not already include these jars under jre/lib/ext
+		-->
+			<fileset dir="${lib.dir}">
+	          <include name="**/*.jar"/>
+	        </fileset>
+
+	</path>
+	
+   <!-- define the "init" target (make directories) -->
+	<target name="init" depends="clean">
+	    <mkdir dir="${build.dir}"/>
+	    <mkdir dir="${gen.dir}"/>
+	</target>
+	
+	<!-- define the client artifacts generation target -->
+	<target name="generate-artifacts">
+		<mkdir dir="${gen.dir}" />
+	   	<echo message="Compiling the descriptions..." />
+	   	<wjc description="${negotiate.wadl}" package="it.polito.dp2.Client"
+	       autoSchemaPackage="true" target="${gen.dir}">
+	     <customizations dir="${root.location}" includes="binding.xjc"/>
+	     <produces dir="${gen.dir}/it/polito/dp2/Client" includes="*.java"/>
+	     <depends dir="${root.location}" includes="build.xml"/>
+	    </wjc>
+	</target>
+
+	<!-- define the "build-negotiate-client" target -->
+	<target name="build-negotiate-client" depends="init, generate-artifacts">
+		<echo>Compiling negotiate client...</echo>
+		<javac	destdir="${build.dir}" 
+				includeantruntime="false" 
+				debug="${debug}"
+				debuglevel="${debuglevel}"
+				source="${source}"
+				target="${target}">
+   			<src path="${src.dir}"/>
+			<src path="${gen.dir}"/>
+			<include name="it/polito/dp2/clientNegotiate/*.java" />
+			<include name="it/polito/dp2/Client/*.java"/>			
+   			<classpath>
+   				<path refid="lib.classpath" />
+   			</classpath>
+		</javac>
+	</target>
+
+	<!-- define the "build-isbn-client" target -->
+	<target name="build-isbn-client" depends="init">
+		<echo>Compiling geoip client...</echo>
+		<javac	destdir="${build.dir}" 
+				includeantruntime="false" 
+				debug="${debug}"
+				debuglevel="${debuglevel}"
+				source="${source}"
+				target="${target}">
+   			<src path="${src.dir}"/>
+			<include name="it/polito/dp2/isbn/*.java" />
+   			<classpath>
+   				<path refid="lib.classpath" />
+   			</classpath>
+		</javac>
+	</target>
+	
+	<!-- define the "build-geoip-client" target -->
+	<target name="build-geoip-client" depends="init">
+		<echo>Compiling geoip client...</echo>
+		<javac	destdir="${build.dir}" 
+				includeantruntime="false" 
+				debug="${debug}"
+				debuglevel="${debuglevel}"
+				source="${source}"
+				target="${target}">
+   			<src path="${src.dir}"/>
+			<include name="it/polito/dp2/geoip/*.java" />
+   			<classpath>
+   				<path refid="lib.classpath" />
+   			</classpath>
+		</javac>
+	</target>
+	
+	<!-- define the "build-counter-client" target -->
+	<target name="build-counter-client" depends="init">
+		<echo>Compiling counter client...</echo>
+		<javac	destdir="${build.dir}" 
+				includeantruntime="false" 
+				debug="${debug}"
+				debuglevel="${debuglevel}"
+				source="${source}"
+				target="${target}">
+   			<src path="${src.dir}"/>
+			<include name="it/polito/dp2/counterClient/*.java" />
+   			<classpath>
+   				<path refid="lib.classpath" />
+   			</classpath>
+		</javac>
+	</target>
+
+	<!-- define the "run.isbn" target -->
+	<target name="run-isbn" depends="build-isbn-client">
+		<java classname="${isbn.class}" fork="true">
+			<classpath>
+				<path refid="lib.classpath" />
+				<pathelement path="${build.dir}" />
+			</classpath>
+		</java>
+	</target>
+
+	<!-- define the "run.geoip" target -->
+	<target name="run-geoip" depends="build-geoip-client">
+		<java classname="${geoip.class}" fork="true">
+			<classpath>
+				<path refid="lib.classpath" />
+				<pathelement path="${build.dir}" />
+			</classpath>
+		</java>
+	</target>
+
+	<!-- define the "run.geoip_jaxb" target -->
+	<target name="run-geoip_jaxb" depends="build-geoip-client">
+		<java classname="${geoip_jaxb.class}" fork="true">
+			<classpath>
+				<path refid="lib.classpath" />
+				<pathelement path="${build.dir}" />
+			</classpath>
+		</java>
+	</target>
+
+	<!-- define the "run.counter" target -->
+	<target name="run-counter" depends="build-counter-client">
+		<java classname="${counter.class}" fork="true">
+			<classpath>
+				<path refid="lib.classpath" />
+				<pathelement path="${build.dir}" />
+			</classpath>
+		</java>
+	</target>
+
+	<!-- define the "run.negotiate" target -->
+	<target name="run-negotiate" depends="build-negotiate-client">
+		<java classname="${negotiate.class}" fork="true">
+			<classpath>
+				<path refid="lib.classpath" />
+				<pathelement path="${build.dir}" />
+			</classpath>
+		</java>
+	</target>
+
+	<!-- define the "clean" target (remove directories) -->
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+		<delete dir="${gen.dir}"/>
+	</target>
+
+</project>
