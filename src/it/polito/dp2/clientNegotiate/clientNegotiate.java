@@ -60,7 +60,7 @@ public class clientNegotiate {
 		    clientNeg.performGet();
 		    
 		    // perform a delete on the first element
-		    clientNeg.performDelete( 1 );
+		    //clientNeg.performDelete( 1 );
 		    
 		    // perform another get to check the difference
 		    clientNeg.performGet();
@@ -78,7 +78,7 @@ public class clientNegotiate {
 	}
 	
 	private static URI getBaseURI() {
-	    return UriBuilder.fromUri("http://127.0.0.1:8080/negotiate-webdyn/webapi/").build();
+	    return UriBuilder.fromUri("http://localhost:8080/negotiate/webapi/").build();
 	  }
 	
 	public void performPost(Negotiate neg) {

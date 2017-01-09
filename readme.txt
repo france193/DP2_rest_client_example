@@ -1,11 +1,6 @@
 JAX-RS client programming examples
 ==================================
 This archive contains the following examples:
-1. a client for the GeoIP service (geographical location information of IP addresses,
-   available in the internet at http://www.webservicex.net/geoipservice.asmx/)
-2. a client for the ISBN service (ISBN-related information,
-   available in the internet at http://xisbn.worldcat.org/webservices/xid/isbn/)
-3. a client for the counter service
 4. a client for the negotiate service
 
 IMPORTAT: these clients are built with Jersey 2.24, that implements JAX-RS 2.0 API.
@@ -42,14 +37,9 @@ files from the war directory in this archive to the webapps Tomcat directory.
 If Tomcat has been started, it will deploy the services automatically.
 You can check that the services are running by looking at the Tomcat management page or by
 browsing the WADL of the services:
-localhost:8080/counter/webapi/application.wadl for the counter service
-localhost:8080/negotiate-webdyn/webapi/application.wadl for the negotiate service
+localhost:8080/negotiate/webapi/application.wadl for the negotiate service
 
 Running the examples
 --------------------
 The examples can be compiled and run by calling the run targets in the build.xml ant script:
-ant run-isbn
-ant run-geoip
-ant run-geoip_jaxb
-ant run-counter
 ant run-negotiate

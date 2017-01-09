@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- Ant script for running client-side JAX-RS examples -->
-<project name="rest-client-examples" default="run-geoip" basedir=".">
+<project name="rest-client-examples" default="run-negotiate" basedir=".">
 	<property name="root.location" location="." />
 	
 	<!-- define directories -->
@@ -16,14 +16,10 @@
 	<property name="source" value="1.8" />
 	
 	<!-- define client classes and packages -->
-	<property name="isbn.class" value="it.polito.dp2.isbn.ISBNClient"/>
-	<property name="geoip.class" value="it.polito.dp2.geoip.GEOIPClient"/>
-	<property name="geoip_jaxb.class" value="it.polito.dp2.geoip.GEOIPClient_jaxb"/>
-	<property name="counter.class" value="it.polito.dp2.counterClient.CounterClient"/>
 	<property name="negotiate.class" value="it.polito.dp2.clientNegotiate.clientNegotiate"/>
 	
 	<!-- define location of WADL for WADL-based example -->
-	<property name="negotiate.name" value="negotiate-webdyn" />
+	<property name="negotiate.name" value="negotiate" />
 	<property name="negotiate.location" value="webapi" />
 	<property name="negotiate.wadl" value="http://localhost:8080/${negotiate.name}/${negotiate.location}/application.wadl" />
 
@@ -81,97 +77,6 @@
    				<path refid="lib.classpath" />
    			</classpath>
 		</javac>
-	</target>
-
-	<!-- define the "build-isbn-client" target -->
-	<target name="build-isbn-client" depends="init">
-		<echo>Compiling geoip client...</echo>
-		<javac	destdir="${build.dir}" 
-				includeantruntime="false" 
-				debug="${debug}"
-				debuglevel="${debuglevel}"
-				source="${source}"
-				target="${target}">
-   			<src path="${src.dir}"/>
-			<include name="it/polito/dp2/isbn/*.java" />
-   			<classpath>
-   				<path refid="lib.classpath" />
-   			</classpath>
-		</javac>
-	</target>
-	
-	<!-- define the "build-geoip-client" target -->
-	<target name="build-geoip-client" depends="init">
-		<echo>Compiling geoip client...</echo>
-		<javac	destdir="${build.dir}" 
-				includeantruntime="false" 
-				debug="${debug}"
-				debuglevel="${debuglevel}"
-				source="${source}"
-				target="${target}">
-   			<src path="${src.dir}"/>
-			<include name="it/polito/dp2/geoip/*.java" />
-   			<classpath>
-   				<path refid="lib.classpath" />
-   			</classpath>
-		</javac>
-	</target>
-	
-	<!-- define the "build-counter-client" target -->
-	<target name="build-counter-client" depends="init">
-		<echo>Compiling counter client...</echo>
-		<javac	destdir="${build.dir}" 
-				includeantruntime="false" 
-				debug="${debug}"
-				debuglevel="${debuglevel}"
-				source="${source}"
-				target="${target}">
-   			<src path="${src.dir}"/>
-			<include name="it/polito/dp2/counterClient/*.java" />
-   			<classpath>
-   				<path refid="lib.classpath" />
-   			</classpath>
-		</javac>
-	</target>
-
-	<!-- define the "run.isbn" target -->
-	<target name="run-isbn" depends="build-isbn-client">
-		<java classname="${isbn.class}" fork="true">
-			<classpath>
-				<path refid="lib.classpath" />
-				<pathelement path="${build.dir}" />
-			</classpath>
-		</java>
-	</target>
-
-	<!-- define the "run.geoip" target -->
-	<target name="run-geoip" depends="build-geoip-client">
-		<java classname="${geoip.class}" fork="true">
-			<classpath>
-				<path refid="lib.classpath" />
-				<pathelement path="${build.dir}" />
-			</classpath>
-		</java>
-	</target>
-
-	<!-- define the "run.geoip_jaxb" target -->
-	<target name="run-geoip_jaxb" depends="build-geoip-client">
-		<java classname="${geoip_jaxb.class}" fork="true">
-			<classpath>
-				<path refid="lib.classpath" />
-				<pathelement path="${build.dir}" />
-			</classpath>
-		</java>
-	</target>
-
-	<!-- define the "run.counter" target -->
-	<target name="run-counter" depends="build-counter-client">
-		<java classname="${counter.class}" fork="true">
-			<classpath>
-				<path refid="lib.classpath" />
-				<pathelement path="${build.dir}" />
-			</classpath>
-		</java>
 	</target>
 
 	<!-- define the "run.negotiate" target -->
